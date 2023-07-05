@@ -4,9 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.core.view.get
 import com.bashsupn.projectschedule.api.RClient
-import com.bashsupn.projectschedule.executive.DashboardExActivity
+import com.bashsupn.projectschedule.executive.DashboardEx
 import com.bashsupn.projectschedule.manager.DashboardmActivity
 import com.bashsupn.projectschedule.models.LoginResponse
 import com.bashsupn.projectschedule.sharedpreferences.PrefManager
@@ -64,7 +63,7 @@ class LoginActivity : AppCompatActivity() {
                         prefManager.saveAccessToken(respon.token)
                         prefManager.setLoggin(true)
                         prefManager.setrole(2)
-                        Intent(this@LoginActivity, DashboardExActivity::class.java).also {
+                        Intent(this@LoginActivity, DashboardEx::class.java).also {
                             it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(it)
                             finish()
@@ -98,7 +97,7 @@ class LoginActivity : AppCompatActivity() {
                     finish()
                 }
             } else if (prefManager.isLogin()!! && prefManager.getrole() == 2) {
-                Intent(this, DashboardExActivity::class.java).also {
+                Intent(this, DashboardEx::class.java).also {
                     it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(it)
                     finish()

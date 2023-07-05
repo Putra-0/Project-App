@@ -4,9 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.bashsupn.projectschedule.R
 
-class DashboardExActivity : AppCompatActivity() {
+class ProjectsEx : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dashboard_ex)
+        setContentView(R.layout.activity_projects_ex)
     }
 }

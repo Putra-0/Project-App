@@ -17,6 +17,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".executive.ProjectsEx"
+            android:exported="false" />
+        <activity
+            android:name=".executive.DashboardEx"
+            android:exported="false" />
+        <activity
             android:name=".manager.ScheduleProject"
             android:exported="false" />
         <activity
@@ -48,9 +54,6 @@
             android:exported="false" />
         <activity
             android:name=".manager.DashboardmActivity"
-            android:exported="false" />
-        <activity
-            android:name=".executive.DashboardExActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
