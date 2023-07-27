@@ -1,9 +1,12 @@
 package com.bashsupn.projectschedule.api
 
+import com.bashsupn.projectschedule.models.CPMResponse
 import com.bashsupn.projectschedule.models.FormResponse
 import com.bashsupn.projectschedule.models.LoginResponse
+import com.bashsupn.projectschedule.models.ProjectExResponse
 import com.bashsupn.projectschedule.models.ProjectResponse
 import com.bashsupn.projectschedule.models.ProjectsResponse
+import com.bashsupn.projectschedule.models.TaskResponse
 import com.bashsupn.projectschedule.models.UsersResponse
 import retrofit2.Call
 import retrofit2.http.*
@@ -46,6 +49,11 @@ interface Api {
     fun getProjects(
     ): Call<ProjectsResponse>
 
+    @GET("jobs/user/{id}")
+    fun getProjects(
+        @Path("id") id: Int
+    ): Call<ProjectExResponse>
+
     @FormUrlEncoded
     @POST("jobs")
     fun addProject(
@@ -53,6 +61,7 @@ interface Api {
         @Field("name") name: String,
         @Field("client_name") client_name: String,
         @Field("address") address: String,
+        @Field("description") description: String,
         @Field("start_date") start_date: String?,
     ): Call<FormResponse>
 
@@ -64,7 +73,7 @@ interface Api {
         @Field("name") name: String,
         @Field("client_name") client_name: String,
         @Field("address") address: String,
-        @Field("status") status: String,
+        @Field("description") description: String,
         @Field("start_date") start_date: String?,
     ): Call<FormResponse>
 
@@ -78,6 +87,11 @@ interface Api {
         @Path("id") id: Int
     ): Call<FormResponse>
 
+    @GET("task/{id}")
+    fun getTask(
+        @Path("id") id: Int
+    ): Call<TaskResponse>
+
     @FormUrlEncoded
     @POST("task")
     fun addTask(
@@ -85,5 +99,34 @@ interface Api {
         @Field("name") name: String,
         @Field("duration") duration: Int?,
         @Field("dependencies") dependencies: String?,
+        @Field("description") description: String?,
     ): Call<FormResponse>
+
+    @FormUrlEncoded
+    @PUT("task/{id}")
+    fun updateTask(
+        @Path("id") id: Int,
+        @Field("job_id") job_id: Int,
+        @Field("name") name: String,
+        @Field("duration") duration: Int?,
+        @Field("dependencies") dependencies: String?,
+        @Field("description") description: String?,
+    ): Call<FormResponse>
+
+    @FormUrlEncoded
+    @PUT("task/status/{id}")
+    fun updateTask(
+        @Path("id") id: Int,
+        @Field("status") status: String,
+    ): Call<FormResponse>
+
+    @DELETE("task/{id}")
+    fun deleteTask(
+        @Path("id") id: Int
+    ): Call<FormResponse>
+
+    @GET("cpm/{id}")
+    fun getCPM(
+        @Path("id") id: Int
+    ): Call<CPMResponse>
 }

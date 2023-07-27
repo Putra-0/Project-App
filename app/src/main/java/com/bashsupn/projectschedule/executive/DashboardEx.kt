@@ -6,9 +6,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bashsupn.projectschedule.LoginActivity
 import com.bashsupn.projectschedule.R
+import com.bashsupn.projectschedule.manager.Schedules
 import com.bashsupn.projectschedule.sharedpreferences.PrefManager
 import kotlinx.android.synthetic.main.activity_dashboard_ex.projects
 import kotlinx.android.synthetic.main.activity_dashboardm.logout
+import kotlinx.android.synthetic.main.activity_dashboardm.schedules
 
 class DashboardEx : AppCompatActivity() {
 
@@ -31,6 +33,11 @@ class DashboardEx : AppCompatActivity() {
 
         projects.setOnClickListener{
             val Intent = Intent(this, ProjectsEx::class.java)
+            startActivity(Intent)
+        }
+
+        schedules.setOnClickListener{
+            val Intent = Intent(this, Schedules::class.java)
             startActivity(Intent)
         }
 

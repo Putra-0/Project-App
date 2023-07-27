@@ -57,14 +57,14 @@ class UpdateProject : AppCompatActivity() {
         val etName: TextInputEditText = et_name_project
         val etClient: TextInputEditText = et_client_name
         val etAddress: TextInputEditText = et_address
-        val etStatus: MaterialAutoCompleteTextView? = et_status
+        val etDesc: TextInputEditText = et_description
         val etDate: TextInputEditText = et_date
 
         etUser.setText(intent.extras?.getString("user"))
         etName?.setText(intent.getStringExtra("name"))
         etClient?.setText(intent.getStringExtra("client"))
         etAddress?.setText(intent.getStringExtra("address"))
-        etStatus?.setText(intent.getStringExtra("status"))
+        etDesc?.setText(intent.getStringExtra("description"))
         etDate?.setText(intent.getStringExtra("start_date"))
     }
 
@@ -108,7 +108,7 @@ class UpdateProject : AppCompatActivity() {
         val name = et_name_project.text.toString()
         val client = et_client_name.text.toString()
         val address = et_address.text.toString()
-        val status = et_status.text.toString()
+        val desc = et_description.text.toString()
 
         if (id == null) {
             Toast.makeText(this, "Invalid project ID", Toast.LENGTH_SHORT).show()
@@ -116,7 +116,7 @@ class UpdateProject : AppCompatActivity() {
         }
 
         val api = RClient.Create(this)
-        val callData = api.updateProject(id, selectedUserId, name, client, address, status, selectedDate)
+        val callData = api.updateProject(id, selectedUserId, name, client, address, desc, selectedDate)
 
         callData.enqueue(object : Callback<FormResponse> {
             override fun onResponse(call: Call<FormResponse>, response: Response<FormResponse>) {

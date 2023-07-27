@@ -12,6 +12,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bashsupn.projectschedule.R
 import com.bashsupn.projectschedule.adapter.AdapterTask
 import com.bashsupn.projectschedule.api.RClient
+import com.bashsupn.projectschedule.models.CPMResponse
 import com.bashsupn.projectschedule.models.Project
 import com.bashsupn.projectschedule.models.ProjectResponse
 import com.bashsupn.projectschedule.sharedpreferences.PrefManager
@@ -35,14 +36,48 @@ class DetailProject : AppCompatActivity() {
 
         prefManager = PrefManager(this)
         detailProject()
+        cpm()
         swipeRefreshLayout = swipe
         rvProjects = findViewById(R.id.rv_user)
         setupRecyclerView()
         swipeRefreshLayout.setOnRefreshListener {
             detailProject()
+            cpm()
             swipeRefreshLayout.isRefreshing = false
         }
 
+    }
+
+    private fun cpm() {
+        val id = intent.extras?.getString("id")
+        val api = RClient.Create(this)
+        val callData = id?.let { api.getCPM(it.toInt()) }
+
+        callData?.enqueue(object : Callback<CPMResponse> {
+            override fun onResponse(
+                call: Call<CPMResponse>,
+                response: Response<CPMResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val cpmResponse = response.body()
+                    cpmResponse?.let {
+                        val cpm = it.critical_path
+                        val total = it.total_duration_critical_path
+                        val etCPM : TextView = findViewById(R.id.cpm)
+                        val etTot: TextView = findViewById(R.id.total)
+                        etCPM.text = "Critical Path : "+ cpm
+                        etTot.text = "Total Duration : "+ total
+                    }
+
+                } else {
+                    Log.e("Response Error", response.message())
+                }
+            }
+
+            override fun onFailure(call: Call<CPMResponse>, t: Throwable) {
+                Log.e("ERROR", t.message.toString())
+            }
+        })
     }
 
     private fun setupRecyclerView() {
@@ -80,6 +115,9 @@ class DetailProject : AppCompatActivity() {
                 Log.e("ERROR", t.message.toString())
             }
         })
+        if (prefManager.getrole() == 2){
+            add_task.visibility = android.view.View.GONE
+        }
         add_task.setOnClickListener{
             val intent = Intent(this, AddTask::class.java)
             intent.putExtra("id", id)
@@ -119,5 +157,6 @@ class DetailProject : AppCompatActivity() {
         etStatus.text = "Status : "+project.status
         etClient.text = "Client : "+project.client_name
         etAddress.text = "Address : "+ project.address
+
     }
 }

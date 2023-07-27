@@ -87,10 +87,13 @@ class AddProject : AppCompatActivity() {
         val etName = et_name_project
         val etClient = et_client_name
         val etAddress = et_address
+        val etDesc = et_description
 
         val name = etName.text.toString()
         val client = etClient.text.toString()
         val address = etAddress.text.toString()
+        val desc = etDesc.text.toString()
+
 
         if (name.isEmpty()) {
             etName.error = "Project name cannot be empty"
@@ -108,7 +111,7 @@ class AddProject : AppCompatActivity() {
         }
 
         val api = RClient.Create(this)
-        val callData = api.addProject(selectedUserId, name, client, address, selectedDate)
+        val callData = api.addProject(selectedUserId, name, client, address,desc, selectedDate)
 
         callData.enqueue(object : Callback<FormResponse> {
             override fun onResponse(

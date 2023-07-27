@@ -61,6 +61,7 @@ class LoginActivity : AppCompatActivity() {
                     } else if (respon?.status == "success" && respon.user.role_id == 2){
                         Toast.makeText(this@LoginActivity, respon.message, Toast.LENGTH_LONG).show()
                         prefManager.saveAccessToken(respon.token)
+                        prefManager.setUserId(respon.user.id)
                         prefManager.setLoggin(true)
                         prefManager.setrole(2)
                         Intent(this@LoginActivity, DashboardEx::class.java).also {

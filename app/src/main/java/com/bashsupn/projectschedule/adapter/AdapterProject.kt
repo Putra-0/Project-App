@@ -66,7 +66,9 @@ class AdapterProject(private val dataList: ArrayList<Projects>) : RecyclerView.A
                     intent.putExtra("client", project.client_name)
                     intent.putExtra("address", project.address)
                     intent.putExtra("user", project.user.name)
-                    intent.putExtra("status", project.status)
+                    if(project.description != null) {
+                        intent.putExtra("description", project.description.toString())
+                    }
                     intent.putExtra("start_date", project.start_date.toString())
                     startActivity(view.context, intent, null) // Menggunakan startActivity dari ContextCompat
                     true

@@ -58,6 +58,21 @@ class PrefManager (context : Context) {
     }
 
     /**
+     * Fungsi set user id
+     */
+    fun setUserId(id: Int) {
+        editor?.putInt("id", id)
+        editor?.commit()
+    }
+
+    /**
+     * Fungsi get user id
+     */
+    fun getUserId(): Int {
+        return prefs.getInt("id", 0)
+    }
+
+    /**
      * Fungsi delete access_token / clear shared preferences
      */
     fun deleteAccessToken() {

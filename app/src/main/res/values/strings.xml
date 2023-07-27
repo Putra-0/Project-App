@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Project Schedule</string>
+
+    <string-array name="dropdown_items">
+        <item>Pending</item>
+        <item>In Progress</item>
+        <item>Completed</item>
+    </string-array>
 </resources>
