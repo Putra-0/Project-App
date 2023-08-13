@@ -15,6 +15,7 @@ data class Task(
     val name: String,
     val slack: Int,
     val start_date: Any,
+    val progress: Int,
     val status: String,
     val updated_at: String
 )

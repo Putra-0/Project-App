@@ -53,6 +53,7 @@ class LoginActivity : AppCompatActivity() {
                         prefManager.saveAccessToken(respon.token)
                         prefManager.setLoggin(true)
                         prefManager.setrole(1)
+                        prefManager.setUserName(respon.user.name)
                         Intent(this@LoginActivity, DashboardmActivity::class.java).also {
                             it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(it)
@@ -62,6 +63,7 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this@LoginActivity, respon.message, Toast.LENGTH_LONG).show()
                         prefManager.saveAccessToken(respon.token)
                         prefManager.setUserId(respon.user.id)
+                        prefManager.setUserName(respon.user.name)
                         prefManager.setLoggin(true)
                         prefManager.setrole(2)
                         Intent(this@LoginActivity, DashboardEx::class.java).also {

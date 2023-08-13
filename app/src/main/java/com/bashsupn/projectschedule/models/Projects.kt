@@ -9,6 +9,7 @@ data class Projects(
     val id: Int,
     val name: String,
     val start_date: Any,
+    val progress : Int,
     val status: String,
     val updated_at: String,
     val user_id: Int,

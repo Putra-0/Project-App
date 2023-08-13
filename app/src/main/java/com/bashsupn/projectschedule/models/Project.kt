@@ -5,13 +5,15 @@ data class Project(
     val client_name: String,
     val created_at: String,
     val description: Any,
-    val end_date: Any,
+    val end_date: String,
     val id: Int,
     val name: String,
-    val start_date: Any,
+    val progress: Int,
+    val start_date: String,
     val status: String,
+    val type: Type,
+    val type_id: Int,
     val updated_at: String,
-    val user_id: Int,
     val user: Login,
-    val tasks: List<Task>
+    val user_id: Int
 )

@@ -8,7 +8,9 @@ import com.bashsupn.projectschedule.LoginActivity
 import com.bashsupn.projectschedule.R
 import com.bashsupn.projectschedule.manager.Schedules
 import com.bashsupn.projectschedule.sharedpreferences.PrefManager
+import kotlinx.android.synthetic.main.activity_dashboard_ex.profile
 import kotlinx.android.synthetic.main.activity_dashboard_ex.projects
+import kotlinx.android.synthetic.main.activity_dashboard_ex.welcomeEx
 import kotlinx.android.synthetic.main.activity_dashboardm.logout
 import kotlinx.android.synthetic.main.activity_dashboardm.schedules
 
@@ -22,6 +24,8 @@ class DashboardEx : AppCompatActivity() {
         setContentView(R.layout.activity_dashboard_ex)
 
         prefManager = PrefManager(this)
+        val name = prefManager.getUserName()
+        welcomeEx.text = "Welcome Back, $name"
         val token = prefManager.fetchAccessToken()
         if (token != null) {
         } else {
@@ -38,6 +42,11 @@ class DashboardEx : AppCompatActivity() {
 
         schedules.setOnClickListener{
             val Intent = Intent(this, Schedules::class.java)
+            startActivity(Intent)
+        }
+
+        profile.setOnClickListener{
+            val Intent = Intent(this, UpdatePassword::class.java)
             startActivity(Intent)
         }
 

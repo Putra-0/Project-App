@@ -103,7 +103,7 @@ class DetailProject : AppCompatActivity() {
                     val projectResponse = response.body()
                     projectResponse?.let {
                         val project = it.data
-                        adapterTask.updateData(project.tasks)
+                        adapterTask.updateData(project.type.tasks)
                         showProjectData(project)
                     }
                 } else {

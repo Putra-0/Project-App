@@ -114,6 +114,13 @@ interface Api {
     ): Call<FormResponse>
 
     @FormUrlEncoded
+    @PUT("task/progress/{id}")
+    fun updateProgress(
+        @Path("id") id: Int,
+        @Field("progress") progress: Int,
+    ): Call<FormResponse>
+
+    @FormUrlEncoded
     @PUT("task/status/{id}")
     fun updateTask(
         @Path("id") id: Int,
@@ -129,4 +136,11 @@ interface Api {
     fun getCPM(
         @Path("id") id: Int
     ): Call<CPMResponse>
+
+    @FormUrlEncoded
+    @PUT("user/newpassword")
+    fun updatePassword(
+        @Field("old_password") old_password: String,
+        @Field("password") password: String
+    ): Call<FormResponse>
 }

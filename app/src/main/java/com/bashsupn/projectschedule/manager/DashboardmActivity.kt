@@ -36,6 +36,8 @@ class DashboardmActivity : AppCompatActivity() {
 
         prefManager = PrefManager(this)
         val token = prefManager.fetchAccessToken()
+        val name = prefManager.getUserName()
+        textView.text = "Welcome Back, $name"
 
         if (token != null) {
         } else {

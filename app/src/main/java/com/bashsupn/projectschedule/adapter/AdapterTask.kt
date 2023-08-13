@@ -41,6 +41,7 @@ class AdapterTask(private val dataList: ArrayList<Task>) : RecyclerView.Adapter<
         holder.nama.text = item.name
         holder.duration.text = "Duration : "+item.duration.toString()
         holder.dependencies.text = "Dependencies : "+item.dependencies.toString()
+        holder.progress.text = "Progress : "+item.progress.toString()+"%"
 
         holder.showPopupMenu.setOnClickListener {
             showPopupMenu(holder.showPopupMenu, position)
@@ -79,14 +80,6 @@ class AdapterTask(private val dataList: ArrayList<Task>) : RecyclerView.Adapter<
                             intent.putExtra("description", task.description.toString())
                         }
                         startActivity(view.context, intent, null) // Menggunakan startActivity dari ContextCompat
-                    }else if (prefManager.getrole() == 2){
-                        val intent = Intent(view.context, UpdateTaskEx::class.java)
-                        val task = dataList[position]
-                        intent.putExtra("id", task.id)
-                        intent.putExtra("status", task.status)
-                        intent.putExtra("idP", task.job_id)
-
-                        startActivity(view.context, intent, null) // Menggunakan startActivity dari ContextCompat
                     }
                     true
                 }
@@ -102,6 +95,17 @@ class AdapterTask(private val dataList: ArrayList<Task>) : RecyclerView.Adapter<
                         .setNegativeButton("No", null)
                         .show()
                     true
+                }
+                R.id.add -> {
+                    if (prefManager.getrole() == 2){
+                        val intent = Intent(view.context, UpdateTaskEx::class.java)
+                        val task = dataList[position]
+                        intent.putExtra("id", task.id)
+                        intent.putExtra("status", task.status)
+                        intent.putExtra("idP", task.job_id)
+
+                        startActivity(view.context, intent, null)}
+                true
                 }
                 else -> false
             }
@@ -140,6 +144,7 @@ class AdapterTask(private val dataList: ArrayList<Task>) : RecyclerView.Adapter<
         val nama: TextView =itemView.findViewById(R.id.mTitle)
         val duration: TextView =itemView.findViewById(R.id.duration)
         val dependencies: TextView =itemView.findViewById(R.id.dependency)
+        val progress : TextView = itemView.findViewById(R.id.progress)
         val showPopupMenu: ImageView =itemView.findViewById(R.id.mMenus)
         val context = itemView.context
     }

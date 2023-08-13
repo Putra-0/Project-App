@@ -73,6 +73,21 @@ class PrefManager (context : Context) {
     }
 
     /**
+     * Fungsi set user name
+     */
+    fun setUserName(name: String) {
+        editor?.putString("name", name)
+        editor?.commit()
+    }
+
+    /**
+     * Fungsi get user name
+     */
+    fun getUserName(): String? {
+        return prefs.getString("name", null)
+    }
+
+    /**
      * Fungsi delete access_token / clear shared preferences
      */
     fun deleteAccessToken() {

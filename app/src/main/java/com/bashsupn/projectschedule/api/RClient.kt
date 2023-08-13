@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RClient {
-    private const val BASE_URL = "https://api.putraeu.my.id/api/"
+    private const val BASE_URL = "https://tes.putraeu.my.id/api/"
     fun Create(context: Context):Api{
         val retrofit= Retrofit.Builder()
             .baseUrl(BASE_URL)

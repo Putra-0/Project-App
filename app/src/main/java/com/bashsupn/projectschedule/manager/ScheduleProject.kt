@@ -11,19 +11,17 @@ import com.bashsupn.projectschedule.models.Task
 import com.bashsupn.projectschedule.sharedpreferences.PrefManager
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Locale
 
 class ScheduleProject : AppCompatActivity() {
 
@@ -36,7 +34,6 @@ class ScheduleProject : AppCompatActivity() {
         prefManager = PrefManager(this)
 
         chart = findViewById(R.id.ganttChart)
-        setupChart()
         fetchTaskData()
     }
 
@@ -54,7 +51,7 @@ class ScheduleProject : AppCompatActivity() {
                     val projectResponse = response.body()
                     projectResponse?.let {
                         val project = it.data
-                        val tasks = project.tasks
+                        val tasks = project.type.tasks
                         populateChartWithTasks(tasks)
                     }
                 } else {
@@ -68,107 +65,105 @@ class ScheduleProject : AppCompatActivity() {
         })
     }
 
-    private fun setupChart() {
-        chart.setDrawBarShadow(false)
-        chart.setDrawValueAboveBar(true)
-        chart.description.isEnabled = false
-        chart.legend.isEnabled = false
-
-        val xAxis: XAxis = chart.xAxis
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(false)
-        xAxis.valueFormatter = IndexAxisValueFormatter()
-
-        val yAxisLeft: YAxis = chart.axisLeft
-        yAxisLeft.setDrawGridLines(false)
-        yAxisLeft.setDrawAxisLine(false)
-        yAxisLeft.setDrawLabels(true)
-
-        val yAxisRight: YAxis = chart.axisRight
-        yAxisRight.setDrawGridLines(false)
-        yAxisRight.setDrawAxisLine(false)
-        yAxisRight.setDrawLabels(false)
-    }
-
     private fun populateChartWithTasks(tasks: List<Task>) {
-        // Clear existing data sets
-        chart.clear()
+        chart.description.isEnabled = false
+        chart.xAxis?.position = XAxis.XAxisPosition.BOTTOM
+        chart.xAxis?.granularity = 1f
+        chart.xAxis?.setDrawGridLines(false) // Remove vertical grid lines
+        chart.xAxis?.spaceMin = 0.5f // Adjust the space before the first bar
 
-        // Create a list of BarEntry objects to hold the task data
-        val entries = ArrayList<BarEntry>()
+        chart.axisLeft.axisMinimum = 0f
+        chart.axisLeft.spaceTop = 35f
+        chart.axisLeft.setDrawGridLines(true)
 
-        // Create a list of labels to display on the y-axis (task names)
-        val labels = ArrayList<String>()
+        chart.axisRight.isEnabled = false
 
-        // Create a list of colors for the tasks
-        val colors = ArrayList<Int>()
-        colors.add(Color.BLUE)
-        colors.add(Color.RED)
-        colors.add(Color.GREEN)
-        // Add more colors as needed for additional tasks
+        val legend = chart.legend
+        legend.isEnabled = true
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP)
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER)
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL)
+        legend.setDrawInside(true)
 
-        // Format for parsing and formatting date strings
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val kasus = ArrayList<CustomBarEntry>()
 
-        // Iterate over the tasks and add them to the entries list
         tasks.forEachIndexed { index, task ->
-            try {
-                // Parse the start and end dates of the task
-                val startDate = dateFormat.parse(task.start_date as String)
-                val endDate = dateFormat.parse(task.end_date as String)
+            // Calculate the task's date range in days
+            val startDate = task.start_date.toString() // Assuming start_date is a String representation of the date
+            val endDate = task.end_date.toString() // Assuming end_date is a String representation of the date
 
-                // Calculate the start and end date indices
-                val startIndex = calculateDateIndex(startDate)
-                val endIndex = calculateDateIndex(endDate)
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val startDateMillis = dateFormat.parse(startDate)?.time ?: 0L
+            val endDateMillis = dateFormat.parse(endDate)?.time ?: 0L
+            val dateRangeInDays = (endDateMillis - startDateMillis) / (1000 * 60 * 60 * 24)
 
-                // Create a BarEntry object with the start date index and the index as the y-value
-                val entry = BarEntry(startIndex.toFloat(), index.toFloat(), floatArrayOf(endIndex.toFloat() - startIndex.toFloat()))
-
-                // Add the entry to the entries list
-                entries.add(entry)
-
-                // Add the task name as the label for the corresponding y-value
-                val taskName = task.name
-                labels.add(taskName)
-            } catch (e: Exception) {
-                Log.e("Date Parsing Error", e.message.toString())
-            }
+            // Create a custom BarEntry with the start_date and task name as extra data (of type String)
+            val customBarEntry = CustomBarEntry(index.toFloat(), dateRangeInDays.toFloat(), startDate, task.name)
+            kasus.add(customBarEntry)
         }
 
-        // Create a BarDataSet with the entries list and a label
-        val dataSet = BarDataSet(entries, "Task Duration")
+        val kasusBarDataSet = BarDataSet(kasus as List<BarEntry>?, "Task")
+        kasusBarDataSet.color = Color.GREEN
 
-        // Set the colors for the bars using the colors list
-        dataSet.colors = colors
+        val taskLabels = tasks.map { it.name + " (" + dateRangeToString(it.start_date as String,
+            it.end_date as String
+        ) + ")" }.toTypedArray()
+        val tanggal = AxisDateFormatter(taskLabels)
+        chart.xAxis?.setValueFormatter(tanggal)
 
-        // Create a BarData object and set it to the chart
-        val data = BarData(dataSet)
-        chart.data = data
+        val barWidth = 0.8f
+        val barData = BarData(kasusBarDataSet)
+        barData.barWidth = barWidth
+        chart.data = barData
+        chart.animateXY(100, 500)
+    }
 
-        // Customize the rest of the chart as needed
+    // Define a custom BarEntry class that extends BarEntry
+    class CustomBarEntry(
+        x: Float,
+        y: Float,
+        val startDate: String,
+        val taskName: String
+    ) : BarEntry(x, y) {
+        override fun getData(): Any? {
+            return startDate
+        }
+    }
 
-        // Set the labels on the y-axis (task names)
-        chart.axisLeft.valueFormatter = IndexAxisValueFormatter(labels)
-
-        // Set the labels on the x-axis
-        chart.xAxis.valueFormatter = object : ValueFormatter() {
-            override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-                val index = value.toInt()
-                return if (index >= 0 && index < labels.size) {
-                    labels[index]
+    // Define the AxisDateFormatter class
+    class AxisDateFormatter(private val mValues: Array<String>) : ValueFormatter() {
+        override fun getFormattedValue(value: Float): String {
+            return if (value >= 0) {
+                if (mValues.isNotEmpty()) {
+                    val index = value.toInt()
+                    if (index < mValues.size) {
+                        val taskInfo = mValues[index].split(" (")
+                        val taskName = taskInfo[0]
+                        val startDate = taskInfo[1].removeSuffix(")")
+                        "$taskName($startDate)"
+                    } else {
+                        "" // Jika index melebihi ukuran mValues, maka kembalikan string kosong.
+                    }
                 } else {
-                    ""
+                    "" // Jika mValues kosong, maka kembalikan string kosong.
                 }
+            } else {
+                "" // Jika value < 0, maka kembalikan string kosong.
             }
         }
 
-        // Refresh the chart to display the updated data
-        chart.invalidate()
+
     }
 
-    private fun calculateDateIndex(date: Date): Int {
-        val calendar = Calendar.getInstance()
-        calendar.time = date
-        return calendar.get(Calendar.DAY_OF_YEAR)
+    // Function to convert date range to the desired format
+    private fun dateRangeToString(startDate: String, endDate: String): String {
+        val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputDateFormat = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
+
+        val startDateMillis = inputDateFormat.parse(startDate)?.time ?: 0L
+        val endDateMillis = inputDateFormat.parse(endDate)?.time ?: 0L
+
+        return "${outputDateFormat.format(startDateMillis)} - ${outputDateFormat.format(endDateMillis)}"
     }
+
 }
